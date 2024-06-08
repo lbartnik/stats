@@ -1,0 +1,113 @@
+---
+title: "01-Proba-z-proby"
+output: html_document
+date: "2024-06-08"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+W rozdziale 6.1 autorzy omawiaja test z. W przykladzie porownuja srednia z egzaminu
+w 30-sto osobowej grupie studentow do sredniej z egzaminu w calej 151-osobowej populacji.
+
+Wg autorow, srednia w grupie 30-osobowej ma rozklad normaly o tej wartosci
+oczekiwanej co srednia w calej populacji (151 osob) i odchylenie standardowe
+rowne odchyleniu w calej populacji podzielonemu przez pierwiastek kwadratowy
+z 30.
+
+To podejscie wydaje sie nieuprawnione, bowiem losowanie (bez zwracania)
+30 elementow z populacji 151 elementow to nie to samo co losowanie 30 elementow
+bezposrednio z rozkladu.
+
+Losujemy populacje o 151 elementach:
+
+```{r}
+mu  <- 15
+sigma <- 3
+N <- 151
+
+P <- rnorm(N, mu, sigma)
+```
+
+Teraz losujemy podpopulacje o 30 elementach:
+
+```{r}
+M <- 30
+S <- sample(P, M)
+```
+
+Wartosc oczekiwana `sd(P)` jest rowna `sigma` ale konkretna realizacja bedzie
+miala wartosc zblizona do `sigma`, ale nie dokladnie jej rowna. Nawet jesli
+wezmiemy to pod uwage, `sd(S)` wciaz nie bedzie rowne `sd(P)/sqrt(M)`.
+
+Sprawdzmy to losujac probe S 100'000 razy i obliczajac srednia w kazdej z
+tych 30-elementowych podpopulacji.
+
+```{r}
+R <- 100000
+m <- replicate(R, mean(sample(P, M)))
+```
+
+Srednia z `m` powinna byc bliska wartosci `mu`:
+
+```{r}
+mean(m)
+```
+
+Ale odchylenie standardowe srednich z tych populacji nie jest bliskie wartosci
+`sigma` podzielonej przez pierwiastek kwadratowy z 30! Zacznijmy od wartosci
+teoretycznej, `sigma / sqrt(30)`:
+
+```{r}
+sigma / sqrt(30)
+```
+
+Co ciekawe, odchylenie standardowe w probie `P` nie jest rowne dokladnie `sigma`.
+Roznice te zobaczymy rowniez, gdy wezmiemy `sd(P)` za podstawe do przewidywania
+wartosci `sd(S)`:
+
+```{r}
+sd(P)/sqrt(30)
+```
+
+I na koniec, faktyczna wartosc `sd(S)`, usredniona ze 100'000 losowan:
+
+```{r}
+sd(m)
+```
+
+
+Inaczej ma sie sprawa, gdy liczebnosc pierwszej proby ustalimy na 1500.
+
+```{r}
+N <- 1500
+P <- rnorm(N, mu, sigma)
+m <- replicate(R, mean(sample(P, M)))
+```
+
+Teraz `sd(P)` wciaz nie jest rowne dokladnie `sigma` (choc jest juz blizsze).
+Ale za to `sd(S)` usrednione ze 100'000 losowan jest juz bardzo bliskie
+`sd(P)/sqrt(30)`:
+
+```{r}
+sigma / sqrt(30)
+sd(P)/sqrt(30)
+sd(m)
+```
+
+
+Sprawdzmy jeszcze jak wyglada sytuacja dla `N = 5000`. Teraz juz wszystkie trzy
+wartosci zbiegaja do tej samej wartosci liczbowej.
+
+```{r}
+N <- 5000
+P <- rnorm(N, mu, sigma)
+m <- replicate(R, mean(sample(P, M)))
+
+sigma / sqrt(30)
+sd(P)/sqrt(30)
+sd(m)
+```
+
