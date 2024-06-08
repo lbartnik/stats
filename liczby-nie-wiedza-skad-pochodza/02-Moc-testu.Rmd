@@ -1,0 +1,59 @@
+---
+title: "Moc testu"
+output: html_document
+date: "2024-06-08"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Na stronach 266-269 autorzy obliczaja minimalna wielkosc efektu, by p-stwa
+bledow I-go i II-go rodzaju wynosily `0.05`
+
+Zaczynamy od progu wymaganego, aby p-stwo bledu I-go rodzaju wynosilo `0.05`.
+Pierwsza proba ma wartosc oczekiwana `mu = 0` i odchylenie standardowe `sd = 1`.
+Wartosc powyzej ktorej srednia z pierwszej proby wypada z p-stwem `0.05`:
+
+```{r}
+x <- qnorm(.95, 0, 1/sqrt(30))
+x
+```
+
+W drugiej kolejnosci znajdujemy wartosc oczekiwana drugiej proby, przy ktorej
+kwantyl `0.05` bedzie mial te sama wartosc `x`.
+
+Prog, aby p-stwo bledu II-go rodzaju wynosilo `0.05`: wartosc ponizej ktorej
+srednia z drugiej proby wypada z p-stwem `0.05`:
+
+```{r}
+y <- qnorm(.05, .6006, 1/sqrt(30))
+y
+```
+
+Oba progi sa praktycznie tozsame:
+
+```{r}
+x-y
+```
+
+Ile wynosi roznica srednich z obu prob wyrazona w odchyleniach stdardowych?
+Przy `sd = 1`, jest to po prostu roznica srednich:
+
+```{r}
+0.6006 - 0
+```
+
+
+W przykladzie numerycznym, wariancja rowna jest `var = 0.14`, proba ma wielkosc
+`n = 30`, a srednie w dwoch populacjach sa rowne `.79` i `.92`:
+
+```{r}
+sigma <- sqrt(.14/30)
+x <- qnorm(0.95, .7, sigma)
+y <- qnorm(0.05, .92, sigma)
+
+x
+y
+x-y
+```

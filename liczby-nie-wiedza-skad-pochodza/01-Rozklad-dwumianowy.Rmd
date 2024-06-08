@@ -1,0 +1,81 @@
+---
+title: "Rozklad dwumianowy"
+output: html_document
+date: "2024-06-08"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Losujemy `N` realizacji zmiennej losowej o rozkladzie dwumianowym z p-stwem
+sukcesu `p = 0.5`.
+
+```{r}
+p <- 0.5
+n <- 1
+N <- 1000
+```
+
+
+```{r}
+x <- rbinom(N, n, p)
+table(x)
+```
+
+Wartosc oczekiwana to `n*p = 0.5`, a odchylenie standarowe to `sqrt(n*p*(1-p)) = 0.5`:
+
+```{r}
+mean(x)
+sd(x)
+```
+
+Teraz powtarzamy ten eksperyment 100'000 razy i za kazdym razem obliczamy
+wartosc srednia z proby liczacej `N=1000` elementow.
+
+```{r}
+R <- 100000
+m <- replicate(R, mean(rbinom(N, n, p)))
+```
+
+Przypomnijmy wartosc oczekiwana i odchylenie standardowe rozkladu:
+
+```{r}
+exp_mu <- n*p
+exp_mu
+
+exp_sd <- sqrt(n*p*(1-p)) / sqrt(N)
+exp_sd
+```
+
+A teraz porownajmy je z wartosciamy z proby:
+
+```{r}
+print(c(exp_mu, mean(m)))
+print(c(exp_sd, sd(m)))
+```
+
+Na koniec, histogram wartosci estymatora z proby:
+
+```{r}
+hist(m, breaks = 100)
+```
+
+A co jesli zmienimy p-stwo sukcesu?
+
+```{r}
+p <- 0.1
+n <- 1
+
+exp_mu <- n*p
+exp_sd <- sqrt(n*p*(1-p)) / sqrt(N)
+
+m <- replicate(R, mean(rbinom(N, n, p)))
+
+print(c(exp_mu, mean(m)))
+print(c(exp_sd, sd(m)))
+```
+
+```{r}
+hist(m, breaks = 100)
+```
